@@ -1,17 +1,14 @@
-# Use Python 3.11 slim image for development
 FROM python:3.11-slim
 
-# Set working directory inside the container
 WORKDIR /app
 
-# Copy only requirements first to cache dependencies
 COPY requirements.txt .
-
-# Install Python packages
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application
 COPY . .
 
-# Expose FastAPI default port
 EXPOSE 8000
+EXPOSE 5678
+
+# Start FastAPI + debugpy in listen mode
+CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

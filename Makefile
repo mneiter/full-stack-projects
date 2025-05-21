@@ -29,3 +29,5 @@ frontend:
 # Start only the backend (if added later)
 backend:
 	docker-compose up --build backend
+
+	

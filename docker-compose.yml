@@ -6,9 +6,10 @@ services:
     container_name: fastapi-backend
     ports:
       - '8000:8000'
+      - '5678:5678' # Debugger port
     volumes:
       - ./backend:/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: python -m debugpy --listen 0.0.0.0:5678 --wait-for-client -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:
     build:
