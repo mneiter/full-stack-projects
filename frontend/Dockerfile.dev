@@ -1,20 +1,23 @@
-# Use official Node.js 20 image as base
+# Use official Node.js 20 base image
 FROM node:20
 
 # Set working directory inside the container
 WORKDIR /app
 
-# Copy dependency definitions
+# Copy dependency definitions first
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Upgrade npm to the latest version
+RUN npm install -g npm@latest
 
-# Copy all project files (except ignored ones)
+# Install dependencies (with root permission handling)
+RUN npm install --unsafe-perm
+
+# Copy all application files
 COPY . .
 
-# Expose default Next.js development port
+# Expose default Next.js dev port
 EXPOSE 3000
 
-# Run the development server
+# Start dev server with live reload
 CMD ["npm", "run", "dev"]

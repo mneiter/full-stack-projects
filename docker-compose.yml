@@ -14,13 +14,15 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
+    container_name: nextjs-frontend
     volumes:
-      - .:/app
-      - /app/node_modules # предотвращает конфликт локальных зависимостей
+      - ./frontend:/app
+      - /app/node_modules
     ports:
       - '3000:3000'
     environment:
       - NODE_ENV=development
+    command: sh -c "npm install && npm run dev"
 
   mongo:
     image: mongo:6
