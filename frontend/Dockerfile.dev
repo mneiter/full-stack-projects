@@ -18,6 +18,7 @@ COPY . .
 
 # Expose default Next.js dev port
 EXPOSE 3000
+EXPOSE 9229
 
 # Start dev server with live reload
-CMD ["npm", "run", "dev"]
+CMD ["node", "--inspect=0.0.0.0:9229", "node_modules/.bin/next", "dev"]
