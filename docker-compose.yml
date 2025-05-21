@@ -1,8 +1,9 @@
-version: '3.8'
-
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: fastapi-backend
     ports:
       - '8000:8000'
     volumes:
@@ -11,7 +12,7 @@ services:
 
   frontend:
     build:
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile.dev
     volumes:
       - .:/app
