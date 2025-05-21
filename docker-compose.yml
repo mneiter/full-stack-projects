@@ -24,7 +24,13 @@ services:
       - NODE_ENV=development
     command: sh -c "npm install && npm run dev"
 
-  mongo:
+  mongodb:
     image: mongo:6
+    container_name: mongo-db
     ports:
       - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
