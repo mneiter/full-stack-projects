@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: nextjs-frontend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+          command:
+            - node
+            - --inspect=0.0.0.0:9229
+            - node_modules/.bin/next
+            - dev
+            - -p
+            - "3000"
