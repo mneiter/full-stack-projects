@@ -6,5 +6,5 @@ spec:
   selector:
     app: frontend
   ports:
-    - port: 3000
-      targetPort: 3000
+    - port: {{ .Values.frontend.containerPort }}
+      targetPort: {{ .Values.frontend.containerPort }}

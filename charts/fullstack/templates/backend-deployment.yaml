@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fastapi-backend
+  name: backend
   labels:
     app: backend
 spec:
-  replicas: 1
+  replicas: {{ .Values.backend.replicaCount }}
   selector:
     matchLabels:
       app: backend
@@ -16,10 +16,15 @@ spec:
     spec:
       containers:
         - name: backend
-          image: fastapi-backend:latest  # мы позже загрузим его в кластер
-          imagePullPolicy: Never         # использовать локальный образ
+          image: {{ .Values.backend.image }}
+          imagePullPolicy: Never
           ports:
-            - containerPort: 8000
-          env:
-            - name: MONGO_URL
-              value: "mongodb://mongo:27017"
+            - containerPort: {{ .Values.backend.containerPort }}
+          command:
+            - uvicorn
+            - app.main:app
+            - --host
+            - '0.0.0.0'
+            - --port
+            - '{{ .Values.backend.containerPort }}'
+            - --reload

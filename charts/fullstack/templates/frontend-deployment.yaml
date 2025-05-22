@@ -5,7 +5,7 @@ metadata:
   labels:
     app: frontend
 spec:
-  replicas: 1
+  replicas: {{ .Values.frontend.replicaCount }}
   selector:
     matchLabels:
       app: frontend
@@ -16,14 +16,13 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: nextjs-frontend:latest
+          image: {{ .Values.frontend.image }}
           imagePullPolicy: Never
           ports:
-            - containerPort: 3000
+            - containerPort: {{ .Values.frontend.containerPort }}
           command:
             - node
             - node_modules/.bin/next
             - dev
             - -p
-            - "3000"
-
+            - '{{ .Values.frontend.containerPort }}'

@@ -6,5 +6,5 @@ spec:
   selector:
     app: mongo
   ports:
-    - port: 27017
-      targetPort: 27017
+    - port: {{ .Values.mongo.containerPort }}
+      targetPort: {{ .Values.mongo.containerPort }}
