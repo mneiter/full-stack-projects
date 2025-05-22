@@ -83,6 +83,41 @@ logs-frontend:
 	kubectl logs -l app=frontend --tail=100 -f
 
 # ==============================
+# 🎯 Helm Section
+# ==============================
+
+HELM_RELEASE := fullstack
+HELM_CHART_PATH := ./charts/fullstack
+
+.PHONY: helm-install helm-upgrade helm-uninstall helm-lint helm-status helm-rollback helm-upgrade-lint
+
+# Check if Helm is installed
+check-helm:
+	@command -v helm >/dev/null 2>&1 || { \
+		echo >&2 "Helm is not installed. Please install it: https://helm.sh/docs/intro/install/"; \
+		exit 1; }
+
+helm-install: check-helm
+	helm install $(HELM_RELEASE) $(HELM_CHART_PATH)
+
+helm-upgrade: check-helm
+	helm upgrade $(HELM_RELEASE) $(HELM_CHART_PATH)
+
+helm-lint: check-helm
+	helm lint $(HELM_CHART_PATH)
+
+helm-uninstall: check-helm
+	helm uninstall $(HELM_RELEASE)
+
+helm-status: check-helm
+	helm status $(HELM_RELEASE)
+
+helm-rollback: check-helm
+	helm rollback $(HELM_RELEASE)
+
+helm-upgrade-lint: helm-lint helm-upgrade
+
+# ==============================
 # 🧭 Help
 # ==============================
 
@@ -91,13 +126,13 @@ logs-frontend:
 help:
 	@echo ""
 	@echo "== Docker Compose Commands =="
-	@echo "  make up           - Start all Docker services"
-	@echo "  make down         - Stop all Docker containers"
-	@echo "  make build        - Rebuild Docker images"
-	@echo "  make restart      - Restart all containers"
-	@echo "  make logs         - View Docker logs"
-	@echo "  make frontend     - Start only frontend"
-	@echo "  make backend      - Start only backend"
+	@echo "  make up               - Start all Docker services"
+	@echo "  make down             - Stop all Docker containers"
+	@echo "  make build            - Rebuild Docker images"
+	@echo "  make restart          - Restart all containers"
+	@echo "  make logs             - View Docker logs"
+	@echo "  make frontend         - Start only frontend"
+	@echo "  make backend          - Start only backend"
 	@echo ""
 	@echo "== Kubernetes Commands =="
 	@echo "  make apply-mongo      - Apply MongoDB k8s resources"
@@ -109,4 +144,13 @@ help:
 	@echo "  make k8s-status       - Show status of pods, services, ingress"
 	@echo "  make logs-backend     - Tail backend pod logs"
 	@echo "  make logs-frontend    - Tail frontend pod logs"
+	@echo ""
+	@echo "== Helm Commands =="
+	@echo "  make helm-install         - Install Helm release"
+	@echo "  make helm-upgrade         - Upgrade Helm release"
+	@echo "  make helm-upgrade-lint    - Lint and upgrade Helm release"
+	@echo "  make helm-lint            - Check Helm chart structure"
+	@echo "  make helm-uninstall       - Uninstall Helm release"
+	@echo "  make helm-status          - Show Helm release status"
+	@echo "  make helm-rollback        - Rollback to previous Helm revision"
 	@echo ""
