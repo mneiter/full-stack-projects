@@ -23,3 +23,5 @@ spec:
           env:
             - name: MONGO_URL
               value: "mongodb://mongo:27017"
+            - name: APP_ROOT_PATH
+              value: "/api"

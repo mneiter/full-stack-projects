@@ -20,6 +20,9 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: {{ .Values.backend.containerPort }}
+          env:
+            - name: APP_ROOT_PATH
+              value: '/api'
           command:
             - uvicorn
             - app.main:app

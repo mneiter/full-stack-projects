@@ -1,15 +1,18 @@
+backend:
+  fullnameOverride: backend
+  image: fastapi-backend:latest
+  replicaCount: 1
+  containerPort: 8000
+
 frontend:
+  fullnameOverride: frontend
   image: nextjs-frontend:latest
   replicaCount: 1
   containerPort: 3000
   debugPort: 9229
 
-backend:
-  image: fastapi-backend:latest
-  replicaCount: 1
-  containerPort: 8000
-
 mongo:
+  fullnameOverride: mongo
   image: mongo:6
   containerPort: 27017
   pvcName: mongo-pvc

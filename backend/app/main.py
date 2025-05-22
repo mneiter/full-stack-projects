@@ -1,7 +1,9 @@
+import os
 from fastapi import FastAPI
 
-app = FastAPI()
+root_path = os.getenv("APP_ROOT_PATH", "")
+app = FastAPI(root_path=root_path)
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello from FastAPI"}
+@app.get("/ping")
+def ping():
+    return {"ping": "pong"}
