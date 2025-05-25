@@ -50,14 +50,14 @@ help:
 
 	@echo:
 	@echo == Argo CD Commands ==
-	@echo   make argo-apply        - Apply ArgoCD application manifest
-	@echo   make argo-delete       - Delete ArgoCD application
-	@echo   make argo-status       - Show ArgoCD application status
-	@echo   make argo-sync         - Force ArgoCD sync (requires CLI)
-	@echo   make argo-login        - Login to ArgoCD using CLI
-	@echo   make argo-password     - Extract initial admin password (PowerShell-compatible)
+	@echo   make argo-apply ENV=dev 	- Apply ArgoCD application manifest
+	@echo   make argo-delete ENV=dev	- Delete ArgoCD application
+	@echo   make argo-status       		- Show ArgoCD application status
+	@echo   make argo-sync         		- Force ArgoCD sync (requires CLI)
+	@echo   make argo-login        		- Login to ArgoCD using CLI
+	@echo   make argo-password     		- Extract initial admin password (PowerShell-compatible)
 	@echo:
 	@echo == Rebuild Commands ==
-	@echo   make rebuild-backend      - Rebuild and restart FastAPI backend
-	@echo   make rebuild-frontend     - Rebuild and restart Next.js frontend
-	@echo   make rebuild-all          - Rebuild and restart both frontend & backend
+	@echo   make rebuild-backend      	- Rebuild and restart FastAPI backend
+	@echo   make rebuild-frontend     	- Rebuild and restart Next.js frontend
+	@echo   make rebuild-all          	- Rebuild and restart both frontend & backend
