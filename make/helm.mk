@@ -14,7 +14,7 @@ check-helm:
 helm-install: check-helm
 	helm upgrade --install $(HELM_RELEASE) $(HELM_CHART_PATH)
 
-ehelm-upgrad: check-helm
+helm-upgrad: check-helm
 	helm upgrade $(HELM_RELEASE) $(HELM_CHART_PATH)
 
 helm-lint: check-helm

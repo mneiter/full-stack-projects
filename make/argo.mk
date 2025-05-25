@@ -9,7 +9,7 @@ check-argocd:
 	@argocd version >NUL 2>&1 || (echo ArgoCD CLI not found. Install it: https://argo-cd.readthedocs.io/en/stable/cli_installation/ & exit 1)
 
 # Apply ArgoCD application manifest for specific environment (PowerShell compatible)
-argo-apply-env:
+argo-apply:
 	@if not defined ENV ( \
 		echo Please provide an environment: make argo-env ENV=dev \
 	) else ( \
@@ -17,7 +17,7 @@ argo-apply-env:
 	)
 
 # Delete base application
-argo-delete-env:
+argo-delete:
 	@if not defined ENV ( \
 		echo Please provide an environment: make argo-env ENV=dev \
 	) else ( \
