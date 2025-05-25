@@ -57,6 +57,9 @@ delete-all:
 	-kubectl delete -f k8s/backend/
 	-kubectl delete -f k8s/mongo/
 
+restart-all:
+	kubectl rollout restart deployment
+
 k8s-status:
 	kubectl get pods,svc,ingress
 
@@ -138,6 +141,7 @@ help:
 	@echo   make apply-ingress    - Apply Ingress routing
 	@echo   make apply-all        - Apply all resources
 	@echo   make delete-all       - Delete all k8s resources
+	@echo   make restart-all      - Restart all deployments	
 	@echo   make k8s-status       - Show status of pods, services, ingress
 	@echo   make logs-backend     - Tail backend pod logs
 	@echo   make logs-frontend    - Tail frontend pod logs
