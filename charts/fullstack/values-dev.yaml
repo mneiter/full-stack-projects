@@ -1,23 +1,13 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: fullstack-dev
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/mneiter/full-stack-projects.git
-    targetRevision: dev
-    path: charts/fullstack
-    helm:
-      releaseName: fullstack-dev
-      valueFiles:
-        - values.yaml
-        - values-dev.yaml
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: dev
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+global:
+  environment: dev
+frontend:
+  image: nextjs-frontend:latest
+  replicaCount: 1
+backend:
+  image: fastapi-backend:latest
+  replicaCount: 1
+mongo:
+  image: mongo:6
+  storage: 1Gi
+ingress:
+  host: dev.localhost

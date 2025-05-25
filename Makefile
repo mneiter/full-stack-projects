@@ -71,9 +71,6 @@ logs-frontend:
 
 # ==============================
 # 🎯 Helm Section
-
-# You can override the Helm release name per environment:
-HELM_RELEASE ?= fullstack-dev
 # ==============================
 
 HELM_RELEASE := fullstack
@@ -106,88 +103,45 @@ helm-upgrade-lint: helm-lint helm-upgrade
 
 # ==============================
 # 🚀 Argo CD Section
-
-# Dynamic ArgoCD environment deployment
-.PHONY: argo-env
-argo-env:
-	powershell -Command " \
-		if (-Not (Test-Path 'argo/argo-app-$(ENV).yaml')) { \
-			Write-Host '❌ File argo/argo-app-$(ENV).yaml not found'; exit 1 \
-		} else { \
-			kubectl apply -f argo/argo-app-$(ENV).yaml \
-		} \
-	"
-argo-env:
-	@if not exist argo\argo-app-$(ENV).yaml ( \
-		echo File not found: argo\argo-app-$(ENV).yaml & exit 1 \
-	) else ( \
-		kubectl apply -f argo\argo-app-$(ENV).yaml \
-	)
-	@if [ ! -f argo/argo-app-$(ENV).yaml ]; then \
-		echo "❌ File argo/argo-app-$(ENV).yaml not found"; \
-		exit 1; \
-	fi
-	kubectl apply -f argo/argo-app-$(ENV).yaml
 # ==============================
 
-.PHONY: argo-apply argo-delete argo-status argo-sync argo-login argo-password check-argocd
+.PHONY: argo-apply argo-delete argo-status argo-sync argo-login argo-password init-namespaces argo-env argo-dev argo-staging argo-prod
 
-# Check if ArgoCD CLI is installed
 check-argocd:
 	@argocd version >NUL 2>&1 || (echo ArgoCD CLI not found. Install it: https://argo-cd.readthedocs.io/en/stable/cli_installation/ & exit 1)
 
-# Apply ArgoCD Application manifest
 argo-apply:
 	kubectl apply -f argo/argo-fullstack-app.yaml
 
-# Delete ArgoCD Application
 argo-delete:
 	kubectl delete -f argo/argo-fullstack-app.yaml || true
 
-# Get ArgoCD Application status
 argo-status:
 	kubectl get applications.argoproj.io -n argocd
 
-# Sync Application via ArgoCD CLI
 argo-sync: check-argocd
 	argocd app sync fullstack --insecure --grpc-web
 
-# Login to ArgoCD
 argo-login: check-argocd
 	argocd login localhost:8080 --username admin --password $$(make argo-password) --insecure --grpc-web
 
-# Apply all necessary Kubernetes namespaces for environments
-init-namespaces:
-	kubectl apply -f argo/namespaces.yaml
-	
-# Apply ArgoCD application for development environment
-argo-dev:
-	kubectl apply -f argo/argo-app-dev.yaml
-
-# Apply ArgoCD application for staging environment
-argo-staging:
-	kubectl apply -f argo/argo-app-staging.yaml
-
-# Apply ArgoCD application for production environment
-argo-prod:
-	kubectl apply -f argo/argo-app-prod.yaml
-
-
-# Extract ArgoCD admin password (PowerShell compatible)
 argo-password:
 	@powershell -Command "[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String((kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}')))"
 
+init-namespaces:
+	kubectl apply -f argo/namespaces.yaml
+
+argo-dev:
+	kubectl apply -f argo/argo-app-dev.yaml
+
+argo-staging:
+	kubectl apply -f argo/argo-app-staging.yaml
+
+argo-prod:
+	kubectl apply -f argo/argo-app-prod.yaml
+
 # ==============================
 # 🔁 Rebuild Containers (Kubernetes)
-
-# Rebuild containers per environment (optional future support)
-.PHONY: rebuild-dev rebuild-staging rebuild-prod
-rebuild-dev:
-	make rebuild-backend && make rebuild-frontend
-rebuild-staging:
-	make rebuild-backend && make rebuild-frontend
-rebuild-prod:
-	make rebuild-backend && make rebuild-frontend
 # ==============================
 
 .PHONY: rebuild-backend rebuild-frontend rebuild-all
@@ -204,13 +158,6 @@ rebuild-all: rebuild-backend rebuild-frontend
 
 # ==============================
 # 🧭 Help
-
-# Tool checks
-.PHONY: check-kubectl check-docker
-check-kubectl:
-	@kubectl version --client >NUL 2>&1 || (echo "kubectl not found." & exit 1)
-check-docker:
-	@docker --version >NUL 2>&1 || (echo "Docker not found." & exit 1)
 # ==============================
 
 .PHONY: help
@@ -233,7 +180,7 @@ help:
 	@echo   make apply-ingress    - Apply Ingress routing
 	@echo   make apply-all        - Apply all resources
 	@echo   make delete-all       - Delete all k8s resources
-	@echo   make restart-all      - Restart all deployments	
+	@echo   make restart-all      - Restart all deployments
 	@echo   make k8s-status       - Show status of pods, services, ingress
 	@echo   make logs-backend     - Tail backend pod logs
 	@echo   make logs-frontend    - Tail frontend pod logs
@@ -248,10 +195,6 @@ help:
 	@echo   make helm-rollback        - Rollback to previous Helm revision
 	@echo:
 	@echo == Argo CD Commands ==
-@echo == Argo CD Environments ==
-@echo   make argo-env ENV=dev      - Deploy ArgoCD app to Dev
-@echo   make argo-env ENV=staging  - Deploy ArgoCD app to Staging
-@echo   make argo-env ENV=prod     - Deploy ArgoCD app to Production
 	@echo   make argo-apply        - Apply ArgoCD application manifest
 	@echo   make argo-delete       - Delete ArgoCD application
 	@echo   make argo-status       - Show ArgoCD application status

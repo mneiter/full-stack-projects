@@ -1,0 +1,13 @@
+global:
+  environment: staging
+frontend:
+  image: nextjs-frontend:staging
+  replicaCount: 2
+backend:
+  image: fastapi-backend:staging
+  replicaCount: 2
+mongo:
+  image: mongo:6
+  storage: 2Gi
+ingress:
+  host: staging.localhost

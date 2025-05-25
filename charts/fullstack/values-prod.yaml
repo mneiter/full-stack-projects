@@ -1,0 +1,13 @@
+global:
+  environment: prod
+frontend:
+  image: nextjs-frontend:prod
+  replicaCount: 3
+backend:
+  image: fastapi-backend:prod
+  replicaCount: 3
+mongo:
+  image: mongo:6
+  storage: 4Gi
+ingress:
+  host: prod.localhost
