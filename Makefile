@@ -71,6 +71,9 @@ logs-frontend:
 
 # ==============================
 # 🎯 Helm Section
+
+# You can override the Helm release name per environment:
+HELM_RELEASE ?= fullstack-dev
 # ==============================
 
 HELM_RELEASE := fullstack
@@ -103,6 +106,28 @@ helm-upgrade-lint: helm-lint helm-upgrade
 
 # ==============================
 # 🚀 Argo CD Section
+
+# Dynamic ArgoCD environment deployment
+.PHONY: argo-env
+argo-env:
+	powershell -Command " \
+		if (-Not (Test-Path 'argo/argo-app-$(ENV).yaml')) { \
+			Write-Host '❌ File argo/argo-app-$(ENV).yaml not found'; exit 1 \
+		} else { \
+			kubectl apply -f argo/argo-app-$(ENV).yaml \
+		} \
+	"
+argo-env:
+	@if not exist argo\argo-app-$(ENV).yaml ( \
+		echo File not found: argo\argo-app-$(ENV).yaml & exit 1 \
+	) else ( \
+		kubectl apply -f argo\argo-app-$(ENV).yaml \
+	)
+	@if [ ! -f argo/argo-app-$(ENV).yaml ]; then \
+		echo "❌ File argo/argo-app-$(ENV).yaml not found"; \
+		exit 1; \
+	fi
+	kubectl apply -f argo/argo-app-$(ENV).yaml
 # ==============================
 
 .PHONY: argo-apply argo-delete argo-status argo-sync argo-login argo-password check-argocd
@@ -131,14 +156,15 @@ argo-sync: check-argocd
 argo-login: check-argocd
 	argocd login localhost:8080 --username admin --password $$(make argo-password) --insecure --grpc-web
 
+# Apply all necessary Kubernetes namespaces for environments
 init-namespaces:
 	kubectl apply -f argo/namespaces.yaml
 	
-# Apply ArgoCD applications for dev environment
+# Apply ArgoCD application for development environment
 argo-dev:
 	kubectl apply -f argo/argo-app-dev.yaml
 
-# Apply ArgoCD applications for staging environment
+# Apply ArgoCD application for staging environment
 argo-staging:
 	kubectl apply -f argo/argo-app-staging.yaml
 
@@ -153,6 +179,15 @@ argo-password:
 
 # ==============================
 # 🔁 Rebuild Containers (Kubernetes)
+
+# Rebuild containers per environment (optional future support)
+.PHONY: rebuild-dev rebuild-staging rebuild-prod
+rebuild-dev:
+	make rebuild-backend && make rebuild-frontend
+rebuild-staging:
+	make rebuild-backend && make rebuild-frontend
+rebuild-prod:
+	make rebuild-backend && make rebuild-frontend
 # ==============================
 
 .PHONY: rebuild-backend rebuild-frontend rebuild-all
@@ -169,6 +204,13 @@ rebuild-all: rebuild-backend rebuild-frontend
 
 # ==============================
 # 🧭 Help
+
+# Tool checks
+.PHONY: check-kubectl check-docker
+check-kubectl:
+	@kubectl version --client >NUL 2>&1 || (echo "kubectl not found." & exit 1)
+check-docker:
+	@docker --version >NUL 2>&1 || (echo "Docker not found." & exit 1)
 # ==============================
 
 .PHONY: help
@@ -206,6 +248,10 @@ help:
 	@echo   make helm-rollback        - Rollback to previous Helm revision
 	@echo:
 	@echo == Argo CD Commands ==
+@echo == Argo CD Environments ==
+@echo   make argo-env ENV=dev      - Deploy ArgoCD app to Dev
+@echo   make argo-env ENV=staging  - Deploy ArgoCD app to Staging
+@echo   make argo-env ENV=prod     - Deploy ArgoCD app to Production
 	@echo   make argo-apply        - Apply ArgoCD application manifest
 	@echo   make argo-delete       - Delete ArgoCD application
 	@echo   make argo-status       - Show ArgoCD application status
