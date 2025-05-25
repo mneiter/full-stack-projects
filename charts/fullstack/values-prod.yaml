@@ -7,7 +7,9 @@ backend:
   image: fastapi-backend:prod
   replicaCount: 3
 mongo:
+  pvcName: mongo-pvc-prod
   image: mongo:6
   storage: 4Gi
+  containerPort: 27017
 ingress:
   host: prod.localhost

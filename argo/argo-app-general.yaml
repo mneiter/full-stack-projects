@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: fullstack
+  name: fullstack-general
   namespace: argocd
 spec:
   project: default
@@ -10,9 +10,10 @@ spec:
     targetRevision: KubernetesArgo
     path: charts/fullstack
     helm:
-      releaseName: fullstack
+      releaseName: fullstack-general
       valueFiles:
         - values.yaml
+        - values-general.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: default

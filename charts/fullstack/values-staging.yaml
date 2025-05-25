@@ -7,7 +7,9 @@ backend:
   image: fastapi-backend:staging
   replicaCount: 2
 mongo:
+  pvcName: mongo-pvc-staging
   image: mongo:6
   storage: 2Gi
+  containerPort: 27017
 ingress:
   host: staging.localhost

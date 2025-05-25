@@ -73,7 +73,7 @@ logs-frontend:
 # 🎯 Helm Section
 # ==============================
 
-HELM_RELEASE := fullstack
+HELM_RELEASE := fullstack-dev
 HELM_CHART_PATH := ./charts/fullstack
 
 .PHONY: helm-install helm-upgrade helm-uninstall helm-lint helm-status helm-rollback helm-upgrade-lint check-helm
@@ -84,7 +84,7 @@ check-helm:
 helm-install: check-helm
 	helm upgrade --install $(HELM_RELEASE) $(HELM_CHART_PATH)
 
-helm-upgrade: check-helm
+ehelm-upgrad: check-helm
 	helm upgrade $(HELM_RELEASE) $(HELM_CHART_PATH)
 
 helm-lint: check-helm
@@ -100,6 +100,18 @@ helm-rollback: check-helm
 	helm rollback $(HELM_RELEASE)
 
 helm-upgrade-lint: helm-lint helm-upgrade
+
+.PHONY: helm-dev helm-staging helm-prod
+
+helm-dev: check-helm
+	helm upgrade --install fullstack-dev $(HELM_CHART_PATH) -f $(HELM_CHART_PATH)/values-dev.yaml
+
+helm-staging: check-helm
+	helm upgrade --install fullstack-staging $(HELM_CHART_PATH) -f $(HELM_CHART_PATH)/values-staging.yaml
+
+helm-prod: check-helm
+	helm upgrade --install fullstack-prod $(HELM_CHART_PATH) -f $(HELM_CHART_PATH)/values-prod.yaml
+
 
 # ==============================
 # 🚀 Argo CD Section
@@ -193,6 +205,11 @@ help:
 	@echo   make helm-uninstall       - Uninstall Helm release
 	@echo   make helm-status          - Show Helm release status
 	@echo   make helm-rollback        - Rollback to previous Helm revision
+	@echo == Helm Environment Commands ==
+	@echo   make helm-dev             - Deploy Dev environment with Helm
+	@echo   make helm-staging         - Deploy Staging environment with Helm
+	@echo   make helm-prod            - Deploy Production environment with
+
 	@echo:
 	@echo == Argo CD Commands ==
 	@echo   make argo-apply        - Apply ArgoCD application manifest
