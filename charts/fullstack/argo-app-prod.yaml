@@ -1,0 +1,15 @@
+metadata:
+  name: fullstack-prod
+  namespace: argocd
+spec:
+  source:
+    repoURL: https://github.com/mneiter/full-stack-projects.git
+    targetRevision: main
+    path: charts/fullstack
+    helm:
+      releaseName: fullstack-prod
+      valueFiles:
+        - values.yaml
+        - values-prod.yaml
+  destination:
+    namespace: prod

@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fullstack
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mneiter/full-stack-projects.git
+    targetRevision: KubernetesArgo
+    path: charts/fullstack
+    helm:
+      releaseName: fullstack
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

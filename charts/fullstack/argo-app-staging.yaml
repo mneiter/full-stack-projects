@@ -1,0 +1,15 @@
+metadata:
+  name: fullstack-staging
+  namespace: argocd
+spec:
+  source:
+    repoURL: https://github.com/mneiter/full-stack-projects.git
+    targetRevision: staging
+    path: charts/fullstack
+    helm:
+      releaseName: fullstack-staging
+      valueFiles:
+        - values.yaml
+        - values-staging.yaml
+  destination:
+    namespace: staging

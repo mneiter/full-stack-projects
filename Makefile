@@ -102,6 +102,53 @@ helm-rollback: check-helm
 helm-upgrade-lint: helm-lint helm-upgrade
 
 # ==============================
+# 🚀 Argo CD Section
+# ==============================
+
+.PHONY: argo-apply argo-delete argo-status argo-sync argo-login argo-password check-argocd
+
+# Check if ArgoCD CLI is installed
+check-argocd:
+	@argocd version >NUL 2>&1 || (echo ArgoCD CLI not found. Install it: https://argo-cd.readthedocs.io/en/stable/cli_installation/ & exit 1)
+
+# Apply ArgoCD Application manifest
+argo-apply:
+	kubectl apply -f argo/argo-fullstack-app.yaml
+
+# Delete ArgoCD Application
+argo-delete:
+	kubectl delete -f argo/argo-fullstack-app.yaml || true
+
+# Get ArgoCD Application status
+argo-status:
+	kubectl get applications.argoproj.io -n argocd
+
+# Sync Application via ArgoCD CLI
+argo-sync: check-argocd
+	argocd app sync fullstack --insecure --grpc-web
+
+# Login to ArgoCD
+argo-login: check-argocd
+	argocd login localhost:8080 --username admin --password $$(make argo-password) --insecure --grpc-web
+
+# Apply ArgoCD applications for dev environment
+argo-dev:
+	kubectl apply -f argo/argo-app-dev.yaml
+
+# Apply ArgoCD applications for staging environment
+argo-staging:
+	kubectl apply -f argo/argo-app-staging.yaml
+
+# Apply ArgoCD application for production environment
+argo-prod:
+	kubectl apply -f argo/argo-app-prod.yaml
+
+
+# Extract ArgoCD admin password (PowerShell compatible)
+argo-password:
+	@powershell -Command "[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String((kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}')))"
+
+# ==============================
 # 🔁 Rebuild Containers (Kubernetes)
 # ==============================
 
@@ -154,6 +201,14 @@ help:
 	@echo   make helm-uninstall       - Uninstall Helm release
 	@echo   make helm-status          - Show Helm release status
 	@echo   make helm-rollback        - Rollback to previous Helm revision
+	@echo:
+	@echo == Argo CD Commands ==
+	@echo   make argo-apply        - Apply ArgoCD application manifest
+	@echo   make argo-delete       - Delete ArgoCD application
+	@echo   make argo-status       - Show ArgoCD application status
+	@echo   make argo-sync         - Force ArgoCD sync (requires CLI)
+	@echo   make argo-login        - Login to ArgoCD using CLI
+	@echo   make argo-password     - Extract initial admin password (PowerShell-compatible)
 	@echo:
 	@echo == Rebuild Commands ==
 	@echo   make rebuild-backend      - Rebuild and restart FastAPI backend
