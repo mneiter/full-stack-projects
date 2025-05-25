@@ -131,6 +131,9 @@ argo-sync: check-argocd
 argo-login: check-argocd
 	argocd login localhost:8080 --username admin --password $$(make argo-password) --insecure --grpc-web
 
+init-namespaces:
+	kubectl apply -f argo/namespaces.yaml
+	
 # Apply ArgoCD applications for dev environment
 argo-dev:
 	kubectl apply -f argo/argo-app-dev.yaml

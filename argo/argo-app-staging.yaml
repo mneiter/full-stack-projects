@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fullstack-staging
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mneiter/full-stack-projects.git
+    targetRevision: staging
+    path: charts/fullstack
+    helm:
+      releaseName: fullstack-staging
+      valueFiles:
+        - values.yaml
+        - values-staging.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: staging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
