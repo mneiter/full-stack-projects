@@ -5,6 +5,10 @@ include make/k8s.mk
 include make/helm.mk
 include make/argo.mk
 
+.PHONY: grafana-password-gitbash
+# ==============================
+grafana-password-gitbash:
+	@kubectl get secret -n monitoring kube-monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 --decode; echo
 
 # ==============================
 # 🧭 Help
