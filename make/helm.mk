@@ -1,4 +1,3 @@
-
 # ==============================
 # 🎯 Helm Section
 # ==============================
@@ -6,45 +5,60 @@
 HELM_RELEASE := fullstack-dev
 HELM_CHART_PATH := ./charts/fullstack
 
-.PHONY: helm-install helm-upgrade helm-uninstall helm-lint helm-status helm-rollback helm-upgrade-lint check-helm helm-monitoring
+.PHONY: check-helm helm-install helm-upgrade helm-uninstall helm-lint helm-status helm-rollback helm-upgrade-lint \
+        helm-dev helm-staging helm-prod helm-monitoring
 
+# Check if Helm CLI is installed
 check-helm:
 	@helm version >NUL 2>&1 || (echo Helm is not installed. Please install it: https://helm.sh/docs/intro/install/ & exit 1)
 
+# Install or upgrade the main Helm release
 helm-install: check-helm
 	helm upgrade --install $(HELM_RELEASE) $(HELM_CHART_PATH)
 
-helm-upgrad: check-helm
+# Upgrade only (no install fallback)
+helm-upgrade: check-helm
 	helm upgrade $(HELM_RELEASE) $(HELM_CHART_PATH)
 
+# Lint the Helm chart for errors and warnings
 helm-lint: check-helm
 	helm lint $(HELM_CHART_PATH)
 
+# Uninstall the Helm release
 helm-uninstall: check-helm
 	helm uninstall $(HELM_RELEASE)
 
+# Show the status of the Helm release
 helm-status: check-helm
 	helm status $(HELM_RELEASE)
 
+# Roll back to the previous revision
 helm-rollback: check-helm
 	helm rollback $(HELM_RELEASE)
 
+# Lint and then upgrade the Helm release
 helm-upgrade-lint: helm-lint helm-upgrade
 
-.PHONY: helm-dev helm-staging helm-prod
+# ==============================
+# 🧪 Environment-specific Helm Deployments
+# ==============================
 
+# Deploy the Dev environment
 helm-dev: check-helm
 	helm upgrade --install fullstack-dev $(HELM_CHART_PATH) -f $(HELM_CHART_PATH)/values-dev.yaml
 
+# Deploy the Staging environment
 helm-staging: check-helm
 	helm upgrade --install fullstack-staging $(HELM_CHART_PATH) -f $(HELM_CHART_PATH)/values-staging.yaml
 
+# Deploy the Production environment
 helm-prod: check-helm
 	helm upgrade --install fullstack-prod $(HELM_CHART_PATH) -f $(HELM_CHART_PATH)/values-prod.yaml
 
-.PHONY: helm-monitoring
+# ==============================
+# 📊 Monitoring stack deployment
+# ==============================
 
-helm-monitoring:
+# Deploy Prometheus + Grafana to the monitoring namespace
+helm-monitoring: check-helm
 	helm upgrade --install monitoring charts/monitoring --namespace monitoring --create-namespace
-
-
