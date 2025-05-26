@@ -1,0 +1,13 @@
+grafana:
+  adminPassword: admin
+  service:
+    type: ClusterIP
+    port: 80
+  serviceAccount:
+    create: true
+  ingress:
+    enabled: false
+
+prometheus:
+  service:
+    type: ClusterIP

@@ -6,7 +6,7 @@
 HELM_RELEASE := fullstack-dev
 HELM_CHART_PATH := ./charts/fullstack
 
-.PHONY: helm-install helm-upgrade helm-uninstall helm-lint helm-status helm-rollback helm-upgrade-lint check-helm
+.PHONY: helm-install helm-upgrade helm-uninstall helm-lint helm-status helm-rollback helm-upgrade-lint check-helm helm-monitoring
 
 check-helm:
 	@helm version >NUL 2>&1 || (echo Helm is not installed. Please install it: https://helm.sh/docs/intro/install/ & exit 1)
@@ -41,4 +41,10 @@ helm-staging: check-helm
 
 helm-prod: check-helm
 	helm upgrade --install fullstack-prod $(HELM_CHART_PATH) -f $(HELM_CHART_PATH)/values-prod.yaml
+
+.PHONY: helm-monitoring
+
+helm-monitoring:
+	helm upgrade --install monitoring charts/monitoring --namespace monitoring --create-namespace
+
 
