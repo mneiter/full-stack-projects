@@ -7,7 +7,20 @@ include make/k8s.mk
 include make/helm.mk
 include make/argo.mk
 
-.PHONY: grafana-proxy grafana-password-gitbash dashboard-proxy dashboard-token help
+.PHONY: argo-proxy argo-password grafana-proxy grafana-password-gitbash dashboard-proxy dashboard-token help
+
+# ==============================
+# 🚀 ArgoCD Access
+# ==============================
+
+# Start a local proxy to access ArgoCD UI on https://localhost:8080
+argo-proxy:
+	kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+# Get the ArgoCD initial admin password (PowerShell-compatible)
+argo-password:
+	@powershell -Command "[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String((kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}')))"
+
 
 # ==============================
 # 📊 Grafana Access

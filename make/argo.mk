@@ -40,10 +40,3 @@ argo-sync: check-argocd
 argo-login: check-argocd
 	argocd login localhost:8080 --username admin --password $$(make argo-password) --insecure --grpc-web
 
-# Start a local proxy to access ArgoCD UI on https://localhost:8080
-argo-proxy:
-	kubectl port-forward svc/argocd-server -n argocd 8080:443
-
-# Get the ArgoCD initial admin password (PowerShell-compatible)
-argo-password:
-	@powershell -Command "[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String((kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}')))"
