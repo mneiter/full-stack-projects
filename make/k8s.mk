@@ -59,6 +59,33 @@ logs-frontend:
 	kubectl logs -l app=frontend --tail=100 -f
 
 # ==============================
+# 🌐 Ingress Controller Management
+# ==============================
+
+.PHONY: ingress-install ingress-uninstall ingress-proxy ingress-status
+
+# Install NGINX Ingress Controller via Helm
+ingress-install:
+	@helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+	@helm repo update
+	@helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+		--namespace ingress-nginx --create-namespace
+
+# Uninstall NGINX Ingress Controller
+ingress-uninstall:
+	@helm uninstall ingress-nginx -n ingress-nginx || true
+	@kubectl delete namespace ingress-nginx --ignore-not-found
+
+# Port-forward to access ingress locally (for http://localhost:8080)
+ingress-proxy:
+	@echo "🔁 Starting local port forward to ingress-nginx (localhost:8080)"
+	kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80
+
+# Show Ingress controller status
+ingress-status:
+	kubectl get pods -n ingress-nginx
+
+# ==============================
 # 🔁 Rebuild Containers (Kubernetes)
 # ==============================
 

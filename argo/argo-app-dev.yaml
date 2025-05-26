@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/mneiter/full-stack-projects.git
-    targetRevision: dev
+    targetRevision: Prometheus
     path: charts/fullstack
     helm:
       releaseName: fullstack-dev
