@@ -62,7 +62,7 @@ logs-frontend:
 # 🌐 Ingress Controller Management
 # ==============================
 
-.PHONY: ingress-install ingress-uninstall ingress-proxy ingress-status
+.PHONY: ingress-install ingress-uninstall ingress-proxy ingress-status ingress-check
 
 # Install NGINX Ingress Controller via Helm
 ingress-install:
@@ -84,6 +84,12 @@ ingress-proxy:
 # Show Ingress controller status
 ingress-status:
 	kubectl get pods -n ingress-nginx
+
+ingress-check:
+	@echo "\n🌍 Ingress status:" && kubectl get ingress -n dev
+	@echo "\n🔎 Describing ingress:" && kubectl describe ingress fullstack-ingress -n dev
+	@echo "\n🌐 Curl test frontend:" && curl -i http://localhost:8080/
+	@echo "\n🧪 Curl test backend:" && curl -i http://localhost:8080/api/tasks || echo "❌ Backend failed"
 
 # ==============================
 # 🔁 Rebuild Containers (Kubernetes)
