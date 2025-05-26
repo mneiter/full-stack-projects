@@ -3,7 +3,24 @@
 # ☸️ Kubernetes Section
 # ==============================
 
-.PHONY: apply-mongo apply-backend apply-frontend apply-ingress apply-all delete-all k8s-status logs-backend logs-frontend
+.PHONY: check-health apply-mongo apply-backend apply-frontend apply-ingress apply-all delete-all k8s-status logs-backend logs-frontend
+
+# ==============================
+# 🔍 Check Kubernetes resource health
+# ==============================
+
+.PHONY: check-health
+
+# Show status of all resources in the given namespace (default: dev)
+check-health:
+	@echo "🔍 Checking health of resources in namespace: $${NAMESPACE:-dev}..."
+	@kubectl get all -n $${NAMESPACE:-dev}
+	@echo
+	@echo "🧪 Describing pods (showing problems if any):"
+	@kubectl get pods -n $${NAMESPACE:-dev} -o name | while read pod; do \
+		echo "\n--- $$pod ---"; \
+		kubectl describe $$pod -n $${NAMESPACE:-dev} | grep -A 5 "Events:" || true; \
+	done
 
 apply-mongo:
 	kubectl apply -f k8s/mongo/

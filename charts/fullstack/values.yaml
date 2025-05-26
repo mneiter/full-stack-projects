@@ -26,8 +26,10 @@ ingress:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
   paths:
     - path: /api(/|$)(.*)
+      pathType: ImplementationSpecific
       serviceName: backend
       servicePort: 8000
     - path: /
+      pathType: ImplementationSpecific
       serviceName: frontend
       servicePort: 3000

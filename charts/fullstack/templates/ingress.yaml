@@ -14,8 +14,8 @@ spec:
       http:
         paths:
           {{- range .Values.ingress.paths }}
-          - path: {{ .path }}
-            pathType: ImplementationSpecific
+          - path: {{ .path | quote }}
+            pathType: {{ .pathType | default "ImplementationSpecific" }}
             backend:
               service:
                 name: {{ .serviceName }}

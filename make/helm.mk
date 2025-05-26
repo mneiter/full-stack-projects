@@ -9,8 +9,11 @@ HELM_CHART_PATH := ./charts/fullstack
         helm-dev helm-staging helm-prod helm-monitoring
 
 # Check if Helm CLI is installed
+NULL := $(if $(findstring Windows,$(OS)),NUL,/dev/null)
+
 check-helm:
-	@helm version >NUL 2>&1 || (echo Helm is not installed. Please install it: https://helm.sh/docs/intro/install/ & exit 1)
+	@echo "Checking Helm CLI version..."
+	@helm version || (echo Helm is not installed. Please install it: https://helm.sh/docs/intro/install/ & exit 1)
 
 # Install or upgrade the main Helm release
 helm-install: check-helm

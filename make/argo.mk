@@ -10,7 +10,8 @@ init-namespaces:
 
 # Check if ArgoCD CLI is installed
 check-argocd:
-	@argocd version >NUL 2>&1 || (echo ArgoCD CLI not found. Install it: https://argo-cd.readthedocs.io/en/stable/cli_installation/ & exit 1)
+	@echo "Checking Argo CD CLI version..."
+	@argocd version || (echo ArgoCD CLI not found. Install it: https://argo-cd.readthedocs.io/en/stable/cli_installation/ & exit 1)
 
 # Apply ArgoCD application manifest for specific environment (PowerShell compatible)
 argo-apply:
