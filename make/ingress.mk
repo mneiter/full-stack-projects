@@ -25,7 +25,7 @@ ingress-uninstall:
 
 # Port-forward to access ingress locally (for http://localhost:8080)
 ingress-proxy:
-	@echo "🔁 Starting local port forward to ingress-nginx (localhost:8080)"
+	@echo "Starting local port forward to ingress-nginx (localhost:8080)"
 	kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80
 
 # Show Ingress controller status
@@ -33,10 +33,10 @@ ingress-status:
 	kubectl get pods -n ingress-nginx
 
 ingress-check:
-	@echo "\n🌍 Ingress status:" && kubectl get ingress -n dev
-	@echo "\n🔎 Describing ingress:" && kubectl describe ingress fullstack-ingress -n dev
-	@echo "\n🌐 Curl test frontend:" && curl -i http://localhost:8080/
-	@echo "\n🧪 Curl test backend:" && curl -i http://localhost:8080/api/tasks || echo "❌ Backend failed"
+	@echo "\nIngress status:" && kubectl get ingress -n dev
+	@echo "\nDescribing ingress:" && kubectl describe ingress fullstack-ingress -n dev
+	@echo "\nCurl test frontend:" && curl -i http://localhost:8080/
+	@echo "\nCurl test backend:" && curl -i http://localhost:8080/api/tasks || echo "Backend failed"
 
 .PHONY: check-ingress
 
