@@ -76,8 +76,9 @@ dashboard-token:
 # --------------------------------------------
 
 argo-help:
+	@echo ""
 	@echo "Available ArgoCD-related commands:"
-	@echo "  make dev-tools             - Start Ingress, Grafana, and Dashboard tools"
+	@echo "  make dev-tools             - Start ArgoCD, Prometheus, Grafana and Dashboard tools"
 	@echo "  make argo-ingress          - Apply ArgoCD Ingress resource"
 	@echo "  make argo-password         - Show initial ArgoCD admin password (PowerShell only)"
 	@echo "  make prometheus-proxy      - Port-forward to Prometheus UI (localhost:9090)"
@@ -85,3 +86,5 @@ argo-help:
 	@echo "  make grafana-password      - Show Grafana admin password"
 	@echo "  make dashboard-proxy       - Start Kubernetes proxy (Dashboard access)"
 	@echo "  make dashboard-token       - Print login token for Kubernetes dashboard"
+	@echo ""
+
