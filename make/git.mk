@@ -12,9 +12,9 @@ rollback-main:
 # Go N commits back. Usage: make git-back N=3
 git-back:
 	@if [ -z "$(N)" ]; then \
-		echo "❌ Please provide how many commits to go back using N=<number>"; \
+		echo "Please provide how many commits to go back using N=<number>"; \
 		exit 1; \
 	else \
-		echo "⏪ Checking out HEAD~$(N)..."; \
+		echo "Checking out HEAD~$(N)..."; \
 		git checkout HEAD~$(N); \
 	fi
