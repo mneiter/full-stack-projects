@@ -18,6 +18,10 @@ mongo:
   pvcName: mongo-pvc
   storage: 1Gi
 
+secret:
+  mongoUri: "mongodb://mongo:27017"
+  jwtSecret: "super-secret-dev-jwt-key"
+  
 ingress:
   enabled: true
   className: nginx

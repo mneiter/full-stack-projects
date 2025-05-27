@@ -47,8 +47,10 @@ helm-upgrade-lint: helm-lint helm-upgrade
 # ==============================
 
 # Deploy the Dev environment
-helm-dev: check-helm
-	helm upgrade --install fullstack-dev $(HELM_CHART_PATH) -f $(HELM_CHART_PATH)/values-dev.yaml
+helm-dev: check-helm check-ingress
+	@echo "Checking Helm CLI version..."
+	@helm version
+	helm upgrade --install fullstack-dev ./charts/fullstack -f ./charts/fullstack/values-dev.yaml
 
 # Deploy the Staging environment
 helm-staging: check-helm
@@ -57,6 +59,12 @@ helm-staging: check-helm
 # Deploy the Production environment
 helm-prod: check-helm
 	helm upgrade --install fullstack-prod $(HELM_CHART_PATH) -f $(HELM_CHART_PATH)/values-prod.yaml
+
+.PHONY: helm-reset-dev
+
+helm-reset-dev:
+	helm uninstall fullstack-dev || true
+	kubectl delete ingress fullstack-ingress -n dev --ignore-not-found
 
 # ==============================
 # 📊 Monitoring stack deployment

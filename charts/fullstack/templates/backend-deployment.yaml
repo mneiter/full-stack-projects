@@ -23,6 +23,16 @@ spec:
           env:
             - name: APP_ROOT_PATH
               value: '/api'
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "fullstack.fullname" . }}-secret
+                  key: MONGO_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "fullstack.fullname" . }}-secret
+                  key: JWT_SECRET
           command:
             - uvicorn
             - app.main:app

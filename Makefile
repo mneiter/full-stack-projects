@@ -5,6 +5,7 @@
 include make/docker.mk
 include make/k8s.mk
 include make/helm.mk
+include make/ingress.mk
 include make/argo.mk
 
 .PHONY: argo-proxy argo-password grafana-proxy grafana-password-gitbash dashboard-proxy dashboard-token help
