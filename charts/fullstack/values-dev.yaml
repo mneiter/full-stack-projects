@@ -11,8 +11,24 @@ mongo:
   image: mongo:6
   storage: 1Gi
   containerPort: 27017
+
 ingress:
+  enabled: true
+  className: nginx
   host: dev.localhost
+  nameOverride: dev
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  paths:
+    - path: /api(/|$)(.*)
+      pathType: ImplementationSpecific
+      serviceName: backend
+      servicePort: 8000
+    - path: /
+      pathType: ImplementationSpecific
+      serviceName: frontend
+      servicePort: 3000
+
 secret:
   mongoUri: "mongodb://mongo:27017"
   jwtSecret: "super-secret-dev-jwt-key"

@@ -2,7 +2,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "fullstack.fullname" . }}-ingress
+  name: {{ .Values.ingress.nameOverride | default (printf "%s-ingress" (include "fullstack.fullname" .)) }}
+  labels:
+    {{- include "fullstack.labels" . | nindent 4 }}
   annotations:
     {{- range $key, $value := (default dict .Values.ingress.annotations) }}
     {{ $key }}: "{{ $value }}"
