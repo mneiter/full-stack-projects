@@ -47,10 +47,8 @@ helm-upgrade-lint: helm-lint helm-upgrade
 # ==============================
 
 # Deploy the Dev environment
-helm-dev: check-helm check-ingress
-	@echo "Checking Helm CLI version..."
-	@helm version
-	helm upgrade --install fullstack-dev ./charts/fullstack -f ./charts/fullstack/values-dev.yaml
+helm-dev: check-helm
+	helm upgrade --install fullstack-dev $(HELM_CHART_PATH) -f $(HELM_CHART_PATH)/values-dev.yaml
 
 # Deploy the Staging environment
 helm-staging: check-helm

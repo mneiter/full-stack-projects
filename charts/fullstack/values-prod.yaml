@@ -13,3 +13,7 @@ mongo:
   containerPort: 27017
 ingress:
   host: prod.localhost
+secret:
+  mongoUri: "mongodb://mongo:27017"
+  jwtSecret: "super-secret-dev-jwt-key"
+
