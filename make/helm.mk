@@ -81,6 +81,7 @@ helm-monitoring: check-helm
 # ============================================
 
 helm-help:
+	@echo ""
 	@echo "== Helm Commands =="
 	@echo "  make helm-install           - Install or upgrade the Helm release"
 	@echo "  make helm-upgrade ENV=dev   - Upgrade Helm release for specific environment"
@@ -93,4 +94,5 @@ helm-help:
 	@echo "  make helm-test ENV=dev      - Run Helm test suite"
 	@echo "  make helm-monitoring        - Deploy monitoring stack"
 	@echo "  make helm-help              - Show this help message"
+	@echo ""
 	

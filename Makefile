@@ -2,123 +2,57 @@
 # Makefile for Full-Stack Kubernetes Project
 # ============================================
 
+include make/argo.mk
 include make/docker.mk
-include make/k8s.mk
 include make/git.mk
 include make/helm.mk
 include make/ingress.mk
-include make/argo.mk
-
-.PHONY: dev-tools argo-ingress argo-password grafana-proxy grafana-password dashboard-proxy dashboard-token help
-
-# --------------------------------------------
-# Developer Tools Setup (ArgoCD, Grafana, Proxy)
-# --------------------------------------------
-
-# Apply ArgoCD Ingress, start Grafana port-forwarding and Kubernetes dashboard proxy
-dev-tools:
-	@echo "Applying ArgoCD Ingress..."
-	kubectl apply -f argo/argocd-ingress.yaml
-
-	@echo "Starting port-forward to Grafana (http://localhost:3000)..."
-	nohup kubectl port-forward svc/monitoring-grafana -n monitoring 3000:80 > /dev/null 2>&1 &
-
-	@echo "Starting Kubernetes proxy (http://localhost:8001)..."
-	nohup kubectl proxy > /dev/null 2>&1 &
-
-	@echo "All developer tools started in background:"
-	@echo "   - Grafana:        http://localhost:3000"
-	@echo "   - K8s Dashboard:  http://localhost:8001"
-
-# --------------------------------------------
-# ArgoCD Access
-# --------------------------------------------
-
-# Create an Ingress resource to expose ArgoCD web UI
-argo-ingress:
-	@echo "Creating Ingress for ArgoCD..."
-	kubectl apply -f argo/argocd-ingress.yaml
-	@echo "ArgoCD should now be accessible at: https://argocd.localhost"
-
-# Get the ArgoCD initial admin password (PowerShell compatible)
-argo-password:
-	@powershell -Command "[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String((kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}')))"
-
-
-# --------------------------------------------
-# Grafana Access
-# --------------------------------------------
-
-# Start a local port-forward to access Grafana UI
-grafana-proxy:
-	kubectl port-forward svc/monitoring-grafana -n monitoring 3000:80
-
-# Get Grafana admin password (Git Bash compatible)
-grafana-password:
-	kubectl get secret -n monitoring kube-monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 --decode; echo
-
-# --------------------------------------------
-# Kubernetes Dashboard Access
-# --------------------------------------------
-
-# Start Kubernetes proxy to access the dashboard
-dashboard-proxy:
-	kubectl proxy
-
-# Get token to log into Kubernetes Dashboard
-dashboard-token:
-	kubectl get secret dashboard-admin-sa-token -o go-template='{{.data.token | base64decode}}'
+include make/k8s.mk
+include make/monitoring.mk
 
 # --------------------------------------------
 # Help Menu
 # --------------------------------------------
 
 help:
-	@echo
-	@echo == Docker Compose Commands ==
-	@echo   make up                    - Start all Docker services
-	@echo   make down                  - Stop all Docker containers
-	@echo   make build                 - Rebuild Docker images
-	@echo   make restart               - Restart all containers
-	@echo   make logs                  - View Docker logs
-	@echo   make frontend              - Start only frontend
-	@echo   make backend               - Start only backend
-	@echo
-	@echo == Kubernetes Commands ==
-	@echo   make apply-mongo           - Apply MongoDB k8s resources
-	@echo   make apply-backend         - Apply FastAPI backend
-	@echo   make apply-frontend        - Apply frontend
-	@echo   make apply-ingress         - Apply Ingress routing
-	@echo   make apply-all             - Apply all resources
-	@echo   make delete-all            - Delete all k8s resources
-	@echo   make restart-all           - Restart all deployments
-	@echo   make k8s-status            - Show status of pods, services, ingress
-	@echo   make logs-backend          - Tail backend pod logs
-	@echo   make logs-frontend         - Tail frontend pod logs
-	@echo
-	@echo == Helm Commands ==
-	@echo   make helm-install          - Install or upgrade Helm release
-	@echo   make helm-upgrade          - Upgrade Helm release
-	@echo   make helm-upgrade-lint     - Lint and upgrade Helm release
-	@echo   make helm-lint             - Check Helm chart structure
-	@echo   make helm-uninstall        - Uninstall Helm release
-	@echo   make helm-status           - Show Helm release status
-	@echo   make helm-rollback         - Rollback to previous Helm revision
-	@echo
-	@echo == Helm Environment Commands ==
-	@echo   make helm-dev              - Deploy Dev environment with Helm
-	@echo   make helm-staging          - Deploy Staging environment with Helm
-	@echo   make helm-prod             - Deploy Production environment with Helm
-	@echo
-	@echo == ArgoCD Commands ==
-	@echo   make argo-apply ENV=dev    - Apply ArgoCD application manifest
-	@echo   make argo-delete ENV=dev   - Delete ArgoCD application
-	@echo   make argo-status           - Show ArgoCD application status
-	@echo   make argo-sync             - Force ArgoCD sync (requires CLI)
-	@echo   make argo-login            - Login to ArgoCD using CLI
-	@echo   make argo-password         - Extract initial admin password
-	@echo
-	@echo == Rebuild Commands ==
-	@echo   make rebuild-backend       - Rebuild and restart FastAPI backend
-	@echo   make rebuild-frontend      - Rebuild and restart Next.js frontend
-	@echo   make rebuild-all           - Rebuild and restart both frontend & backend
+	@echo ""
+	@echo "ArgoCD Commands:"
+	@echo "  make init-namespaces         - Create namespaces used by ArgoCD apps"
+	@echo "  make check-argocd            - Check if ArgoCD CLI is installed"
+	@echo "  make argo-apply ENV=dev      - Apply ArgoCD app manifest for environment"
+	@echo "  make argo-delete ENV=dev     - Delete ArgoCD app manifest"
+	@echo "  make argo-status             - Show ArgoCD application status"
+	@echo "  make argo-sync               - Sync ArgoCD application (requires CLI)"
+	@echo "  make argo-login              - Login to ArgoCD with initial password"
+	@echo "  make argo-password           - Show initial admin password"
+	@echo "  make argo-help               - Show this help menu"
+	@echo ""
+	@echo "Docker Compose Commands:"
+	@echo "  make up              - Start all services with build"
+	@echo "  make down            - Stop all running services"
+	@echo "  make build           - Build Docker images only"
+	@echo "  make restart         - Rebuild and restart all services"
+	@echo "  make logs            - Tail logs from all services"
+	@echo "  make frontend        - Start only the frontend service"
+	@echo "  make backend         - Start only the backend service"
+	@echo "  make docker-help     - Show this help message"
+	@echo ""
+	@echo "Available Git rollback commands:"
+	@echo "  make rollback-one-commit       - Checkout previous commit (HEAD^)"
+	@echo "  make rollback-main             - Return to 'main' branch"
+	@echo "  make git-back N=<number>       - Checkout N commits back from HEAD"
+	@echo "  make git-help                  - Show this help message"
+	@echo ""
+	@echo "== Helm Commands =="
+	@echo "  make helm-install           - Install or upgrade the Helm release"
+	@echo "  make helm-upgrade ENV=dev   - Upgrade Helm release for specific environment"
+	@echo "  make helm-lint              - Lint the Helm chart"
+	@echo "  make helm-uninstall ENV=dev - Uninstall the Helm release"
+	@echo "  make helm-status ENV=dev    - Show Helm release status"
+	@echo "  make helm-rollback ENV=dev  - Roll back Helm release"
+	@echo "  make helm-upgrade-lint ENV=dev - Lint and upgrade"
+	@echo "  make helm-reset ENV=dev     - Reset Helm release and run tests"
+	@echo "  make helm-test ENV=dev      - Run Helm test suite"
+	@echo "  make helm-monitoring        - Deploy monitoring stack"
+	@echo "  make helm-help              - Show this help message"
+	@echo ""
