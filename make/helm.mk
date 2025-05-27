@@ -63,16 +63,16 @@ helm-prod: check-helm
 
 # Reset the fullstack Helm release: uninstall, delete conflicting ingress, reinstall, and run tests
 helm-reset-dev:
-	@echo "🔄 Uninstalling existing Helm release..."
+	@echo "Uninstalling existing Helm release..."
 	-helm uninstall fullstack-dev || true
 
-	@echo "🧹 Deleting existing Ingress (if any)..."
+	@echo "Deleting existing Ingress (if any)..."
 	kubectl delete ingress fullstack-ingress -n dev --ignore-not-found
 
-	@echo "🚀 Installing Helm release..."
+	@echo "Installing Helm release..."
 	helm upgrade --install fullstack-dev ./charts/fullstack -f ./charts/fullstack/values-dev.yaml
 
-	@echo "🧪 Running Helm tests..."
+	@echo "Running Helm tests..."
 	helm test fullstack-dev --logs
 
 
@@ -80,7 +80,7 @@ helm-reset-dev:
 
 # Run Helm post-install tests for the release (backend, mongo, frontend healthchecks)
 helm-test:
-	@echo "🧪 Running Helm tests for release: fullstack-dev..."
+	@echo "Running Helm tests for release: fullstack-dev..."
 	helm test fullstack-dev --logs
 
 

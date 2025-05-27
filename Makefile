@@ -4,6 +4,7 @@
 
 include make/docker.mk
 include make/k8s.mk
+include make/git.mk
 include make/helm.mk
 include make/ingress.mk
 include make/argo.mk
