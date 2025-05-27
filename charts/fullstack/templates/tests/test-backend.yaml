@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: '{{ .Release.Name }}-test-backend'
+  annotations:
+    'helm.sh/hook': test
+spec:
+  restartPolicy: Never
+  containers:
+    - name: curl
+      image: curlimages/curl:8.2.1
+      command: ['curl']
+      args:
+        [
+          '--fail',
+          'http://{{ .Values.backend.fullnameOverride }}:{{ .Values.backend.containerPort }}/docs',
+        ]

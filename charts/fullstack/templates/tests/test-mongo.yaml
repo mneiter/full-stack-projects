@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: '{{ .Release.Name }}-test-mongo'
+  annotations:
+    'helm.sh/hook': test
+spec:
+  restartPolicy: Never
+  containers:
+    - name: mongo-client
+      image: bitnami/mongodb:6.0
+      command: ['mongosh']
+      args:
+        [
+          'mongodb://{{ .Values.mongo.fullnameOverride }}:{{ .Values.mongo.containerPort }}',
+          '--eval',
+          'db.stats()',
+        ]
