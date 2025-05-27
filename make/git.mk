@@ -25,7 +25,10 @@ git-back:
 
 # Show available Git rollback commands
 git-help:
+	@echo ""
 	@echo "Available Git rollback commands:"
 	@echo "  make rollback-one-commit       - Checkout previous commit (HEAD^)"
 	@echo "  make rollback-main             - Return to 'main' branch"
 	@echo "  make git-back N=<number>       - Checkout N commits back from HEAD"
+	@echo "  make git-help                  - Show this help message"
+	@echo ""
