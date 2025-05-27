@@ -9,6 +9,24 @@ include make/helm.mk
 include make/ingress.mk
 include make/argo.mk
 
+.PHONY: dev-tools
+
+# Apply ArgoCD Ingress, start Grafana port-forwarding and Kubernetes dashboard proxy
+dev-tools:
+	@echo "Applying ArgoCD Ingress..."
+	kubectl apply -f argo/argocd-ingress.yaml
+
+	@echo "Starting port-forward to Grafana (localhost:3000)..."
+	@nohup kubectl port-forward svc/monitoring-grafana -n monitoring 3000:80 > /dev/null 2>&1 &
+
+	@echo "Starting Kubernetes proxy (localhost:8001)..."
+	@nohup kubectl proxy > /dev/null 2>&1 &
+
+	@echo "✅ All dev tools started in background:"
+	@echo "   - Grafana:     http://localhost:3000"
+	@echo "   - K8s Dashboard: http://localhost:8001"
+
+
 # ==============================
 # 🚀 ArgoCD Access
 # ==============================
@@ -17,9 +35,9 @@ include make/argo.mk
 
 # Create an Ingress resource to expose the Argo CD web UI at https://argocd.localhost
 argo-ingress:
-	@echo "🚀 Creating Ingress for Argo CD..."
+	@echo "Creating Ingress for Argo CD..."
 	kubectl apply -f argo/argocd-ingress.yaml
-	@echo "✅ Argo CD should now be accessible at: https://argocd.localhost"
+	@echo "Argo CD should now be accessible at: https://argocd.localhost"
 
 # Get the ArgoCD initial admin password (PowerShell-compatible)
 argo-password:
