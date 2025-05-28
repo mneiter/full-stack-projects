@@ -1,11 +1,14 @@
 global:
   environment: dev
+  
 frontend:
   image: nextjs-frontend:latest
   replicaCount: 1
+
 backend:
   image: fastapi-backend:latest
   replicaCount: 1
+
 mongo:
   pvcName: mongo-pvc-dev
   image: mongo:6
